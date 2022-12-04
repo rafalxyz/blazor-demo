@@ -1,0 +1,20 @@
+﻿@page "/categories"
+<PageTitle>Categories</PageTitle>
+
+<h1>Categories</h1>
+
+@if (categories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudPaper>
+        <MudList>
+            @foreach (var category in categories)
+            {
+                <MudListItem Text="@category.Name" OnDeleted="OnDeleted"></MudListItem>
+            }
+        </MudList>
+    </MudPaper>
+}

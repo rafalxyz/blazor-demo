@@ -1,0 +1,32 @@
+﻿@using BlazorDemo.Shared
+@using BlazorDemo.Shared.Todos
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Create" Class="mr-3 mb-n1" />
+            Add Todo
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@form" Validation="@(Validator.ValidateValue)">
+            <MudTextField Label="Name" @bind-Value="@model.Name" For="@(() => model.Name)" />
+            <MudDatePicker Label="Due Date" @bind-Date="@model.DueDate" For="@(() => model.DueDate)" DisableToolbar="true" />
+            <MudSelect @bind-Value="@model.Priority" Label="Priority">
+                @foreach (var priority in Dictionaries.Priorities)
+                {
+                    <MudSelectItem Value="priority.Value">@priority.Text</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect @bind-Value="@model.CategoryId" Label="Category">
+                @foreach (var category in categories)
+                {
+                    <MudSelectItem Value="category.Id">@category.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>

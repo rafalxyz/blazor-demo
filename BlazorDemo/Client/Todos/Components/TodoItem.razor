@@ -1,0 +1,25 @@
+﻿<MudCard Class="mb-2">
+    <MudCardContent>
+        <MudText Typo="Typo.h6" Style="@(Todo.IsCompleted ? "text-decoration:line-through" : null)">@Todo.Name</MudText>
+        <MudText Typo="Typo.body2" Color="@(IsOverdue ? Color.Error : Color.Default)">Due Date: @Todo.DueDate.ToString("dd/MM/yyyy")</MudText>
+        <MudText Typo="Typo.body2">Priority: @PriorityName</MudText>
+        <MudText Typo="Typo.body2">Category: @Todo.CategoryName</MudText>
+    </MudCardContent>
+    <MudCardActions Class="d-flex justify-end">
+        @if (!Todo.IsCompleted)
+        {
+            <MudButton @onclick="CompleteTodo"
+                   StartIcon="@Icons.Material.Filled.Check"
+                   Variant="Variant.Text"
+                   Color="Color.Success">
+                Complete
+            </MudButton>
+        }
+        <MudButton @onclick="DeleteTodo"
+                   StartIcon="@Icons.Material.Filled.Delete"
+                   Variant="Variant.Text"
+                   Color="Color.Error">
+            Delete
+        </MudButton>
+    </MudCardActions>
+</MudCard>

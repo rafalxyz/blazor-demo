@@ -1,0 +1,32 @@
+﻿@page "/todos"
+@using BlazorDemo.Client.Todos.Components;
+<PageTitle>Todos</PageTitle>
+
+<h1>Todos</h1>
+
+@if (todos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudElement Class="d-flex justify-end mb-2">
+        <MudButton
+            @onclick="AddTodo"
+            StartIcon="@Icons.Material.Filled.Create"
+            Variant="Variant.Filled"
+            Color="Color.Primary"
+        >
+            Add Todo
+        </MudButton>
+    </MudElement>
+
+    @foreach (var todo in todos.Items)
+    {
+        <TodoItem Todo="todo" OnDeleted="OnDeleted"></TodoItem>
+    }
+
+    <MudElement Class="d-flex justify-center mb-5">
+        <MudPagination Color="Color.Primary" Count="@todos.PageCount" SelectedChanged="OnPageChanged" />
+    </MudElement>
+}

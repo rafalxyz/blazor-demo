@@ -1,0 +1,6 @@
+﻿@if (OverdueTodosState.Count != null && OverdueTodosState.Count > 0)
+{
+    <MudBadge Content="@OverdueTodosState.Count" Overlap="true" Color="Color.Error">
+        <MudIcon Icon="@Icons.Material.Filled.Notifications" />
+    </MudBadge>
+}
