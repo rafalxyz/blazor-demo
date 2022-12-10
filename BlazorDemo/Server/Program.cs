@@ -1,4 +1,5 @@
 using BlazorDemo.Server.Exceptions;
+using BlazorDemo.Server.Services;
 using BlazorDemo.Shared.Services;
 using BlazorDemo.Shared.Todos;
 using FluentValidation;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddTransient<ITodoService, TodoService>();
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddValidatorsFromAssemblyContaining<TodoCreateDtoValidator>();
 

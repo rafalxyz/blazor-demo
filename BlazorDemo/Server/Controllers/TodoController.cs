@@ -1,6 +1,5 @@
-using BlazorDemo.Server.Extensions;
+using BlazorDemo.Server.Services;
 using BlazorDemo.Shared;
-using BlazorDemo.Shared.Services;
 using BlazorDemo.Shared.Todos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,123 +9,53 @@ namespace BlazorDemo.Server.Controllers;
 [Route("api/todos")]
 public class TodoController : ControllerBase
 {
-    private static readonly List<TodoDto> Todos = new()
-    {
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn Blazor",
-            DueDate = DateTime.Now.Date.AddDays(7),
-            IsCompleted = true,
-            Priority = Priority.High,
-            CategoryId = CategoryController.Categories[0].Id,
-            CategoryName = CategoryController.Categories[0].Name,
-        },
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn Cosmos",
-            DueDate = DateTime.Now.Date.AddDays(-1),
-            Priority = Priority.Low,
-            CategoryId = CategoryController.Categories[5].Id,
-            CategoryName = CategoryController.Categories[5].Name,
-        },
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn Azure Functions",
-            DueDate = DateTime.Now.Date.AddDays(-1),
-            Priority = Priority.Normal,
-            CategoryId = CategoryController.Categories[2].Id,
-            CategoryName = CategoryController.Categories[2].Name,
-        },
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn Kubernetes",
-            DueDate = DateTime.Now.Date.AddDays(14),
-            Priority = Priority.Normal,
-            CategoryId = CategoryController.Categories[3].Id,
-            CategoryName = CategoryController.Categories[3].Name,
-        },
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn Azure DevOps",
-            DueDate = DateTime.Now.Date.AddDays(14),
-            Priority = Priority.Normal,
-            CategoryId = CategoryController.Categories[2].Id,
-            CategoryName = CategoryController.Categories[2].Name,
-        },
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn Angular",
-            DueDate = DateTime.Now.Date.AddDays(14),
-            Priority = Priority.Normal,
-            CategoryId = CategoryController.Categories[1].Id,
-            CategoryName = CategoryController.Categories[1].Name,
-        },
-        new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Learn React",
-            DueDate = DateTime.Now.Date.AddDays(14),
-            Priority = Priority.Normal,
-            CategoryId = CategoryController.Categories[1].Id,
-            CategoryName = CategoryController.Categories[1].Name,
-        }
-    };
+    private readonly ITodoService _todoService;
 
-    private readonly IDateTimeProvider _dateTimeProvider;
-
-    public TodoController(IDateTimeProvider dateTimeProvider)
+    public TodoController(ITodoService todoService)
     {
-        _dateTimeProvider = dateTimeProvider;
+        _todoService = todoService;
     }
 
     [HttpGet("search")]
     public IActionResult Search(int pageNumber, int pageSize)
     {
-        var response = Todos.ToPagedResponse(pageNumber, pageSize);
+        var response = _todoService.Search(pageNumber, pageSize);
         return new JsonResult(response);
     }
 
     [HttpGet("overdueCount")]
     public IActionResult GetOverdueCount()
     {
-        var count = Todos.Count(x => x.DueDate < _dateTimeProvider.Now().Date && !x.IsCompleted);
+        var count = _todoService.GetOverdueCount();
         return new JsonResult(count);
     }
 
     [HttpPost("")]
     public IActionResult Create(TodoCreateDto dto)
     {
-        var newTodo = new TodoDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = dto.Name,
-            DueDate = dto.DueDate!.Value,
-            Priority = dto.Priority,
-            CategoryId = dto.CategoryId,
-            CategoryName = CategoryController.Categories.Single(x => x.Id == dto.CategoryId).Name
-        };
-        Todos.Add(newTodo);
+        var newTodo = _todoService.Create(dto);
         return new JsonResult(new IdResponse(newTodo.Id));
     }
 
     [HttpPost("{id}")]
     public IActionResult Complete(string id)
     {
-        var todo = Todos.Single(x => x.Id == id);
-        todo.IsCompleted = true;
+        _todoService.Complete(id);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(string id)
     {
-        Todos.RemoveAll(x => x.Id == id);
+        _todoService.Delete(id);
+        return NoContent();
+    }
+
+    // TODO: Just for testing
+    [HttpDelete("")]
+    public IActionResult DeleteAll()
+    {
+        _todoService.DeleteAll();
         return NoContent();
     }
 }
